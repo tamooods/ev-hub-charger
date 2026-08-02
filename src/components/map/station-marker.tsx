@@ -1,6 +1,6 @@
+import L from "leaflet";
 import { useEffect, useRef } from "react";
 import { Marker, Popup, Tooltip } from "react-leaflet";
-import L from "leaflet";
 
 import { useMapContext } from "@/components/map/map-context";
 import { getBrand } from "@/lib/brands";
@@ -60,14 +60,18 @@ function StationPopupContent({ station }: StationPopupContentProps) {
   return (
     <div className="min-w-56">
       <h4 className="mb-1 text-sm font-semibold">{station.name}</h4>
-      {specs.length > 0 && <p className="text-xs text-slate-600">{specs.join(" · ")}</p>}
-      {brand?.app && <p className="text-xs text-slate-500">App ที่ต้องใช้: {brand.app}</p>}
+      {specs.length > 0 && (
+        <p className="text-xs text-slate-600">{specs.join(" · ")}</p>
+      )}
+      {brand?.app && (
+        <p className="text-xs text-slate-500">App ที่ต้องใช้: {brand.app}</p>
+      )}
       <div className="mt-2 flex flex-col gap-1">
         <a
           href={mapsSearchUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded bg-blue-600 px-2 py-1 text-center text-xs font-medium text-white"
+          className="rounded bg-blue-600 px-2 py-1 text-center text-xs font-medium text-white!"
         >
           เปิดใน Google Maps
         </a>
@@ -75,7 +79,7 @@ function StationPopupContent({ station }: StationPopupContentProps) {
           href={mapsDirUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded bg-slate-800 px-2 py-1 text-center text-xs font-medium text-white"
+          className="rounded bg-slate-800 px-2 py-1 text-center text-xs font-medium text-white!"
         >
           นำทางทันที จากตำแหน่งปัจจุบัน
         </a>

@@ -24,7 +24,7 @@ export const MAP_THEMES: MapTheme[] = [
   },
 ];
 
-export const DEFAULT_THEME_ID = "contrast";
+export const DEFAULT_THEME_ID = "terrain";
 
 export const REGION_LABELS: Record<Region, string> = {
   central: "ภาคกลาง",

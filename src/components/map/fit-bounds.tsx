@@ -10,7 +10,11 @@ interface FitBoundsProps {
   maxZoom?: number;
 }
 
-export function FitBounds({ points, padding = 50, maxZoom = 12 }: FitBoundsProps) {
+export function FitBounds({
+  points,
+  padding = 50,
+  maxZoom = 12,
+}: FitBoundsProps) {
   const map = useMap();
 
   useEffect(() => {

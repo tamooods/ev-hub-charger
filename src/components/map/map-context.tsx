@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -34,7 +40,9 @@ interface MapProviderProps {
 
 export function MapProvider({ children }: MapProviderProps) {
   const [themeId, setThemeId] = useState<string>(DEFAULT_THEME_ID);
-  const [selectedStationId, setSelectedStationId] = useState<string | null>(null);
+  const [selectedStationId, setSelectedStationId] = useState<string | null>(
+    null,
+  );
   const [focusPoint, setFocusPoint] = useState<LatLng | null>(null);
   const [map, setMap] = useState<L.Map | null>(null);
 
@@ -53,7 +61,7 @@ export function MapProvider({ children }: MapProviderProps) {
       map,
       setMap,
     }),
-    [themeId, selectedStationId, selectStation, focusPoint, map]
+    [themeId, selectedStationId, selectStation, focusPoint, map],
   );
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
@@ -78,7 +86,11 @@ export function MapShell({ children }: MapShellProps) {
       attributionControl={true}
       zoomControl={true}
     >
-      <TileLayer url={theme.url} attribution={theme.attribution} maxZoom={theme.maxZoom} />
+      <TileLayer
+        url={theme.url}
+        attribution={theme.attribution}
+        maxZoom={theme.maxZoom}
+      />
       {children}
     </MapContainer>
   );

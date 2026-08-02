@@ -19,7 +19,10 @@ export function RouteLayer({ coordinates }: RouteLayerProps) {
         pathOptions={{ color: "#16a34a", fillColor: "#16a34a", fillOpacity: 1 }}
       />
       <CircleMarker
-        center={[coordinates[coordinates.length - 1].lat, coordinates[coordinates.length - 1].lng]}
+        center={[
+          coordinates[coordinates.length - 1].lat,
+          coordinates[coordinates.length - 1].lng,
+        ]}
         radius={7}
         pathOptions={{ color: "#dc2626", fillColor: "#dc2626", fillOpacity: 1 }}
       />
