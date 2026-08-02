@@ -1,7 +1,12 @@
 import { useMapContext } from "@/components/map/map-context";
 import { getBrand } from "@/lib/brands";
 import { REGION_LABELS } from "@/lib/map";
+import { buildBrandSvg } from "@/lib/marker-icon";
 import type { Region, Station } from "@/lib/types";
+
+function iconDataUri(brand: ReturnType<typeof getBrand>): string {
+  return `data:image/svg+xml;utf8,${encodeURIComponent(buildBrandSvg(brand, 20))}`;
+}
 
 interface StationListProps {
   stations: Station[];
@@ -50,8 +55,12 @@ function StationRow({ station, selected, onSelect }: StationRowProps) {
         }`}
       >
         <span
-          className="mt-1 inline-block h-3 w-3 shrink-0 rounded-full"
-          style={{ backgroundColor: brand?.color ?? "#0ea5e9" }}
+          className="mt-1 inline-block h-5 w-5 shrink-0"
+          style={{
+            backgroundImage: `url("${iconDataUri(brand)}")`,
+            backgroundSize: "contain",
+            backgroundRepeat: "no-repeat",
+          }}
         />
         <span className="min-w-0">
           <span className="block truncate text-sm font-medium text-slate-900">

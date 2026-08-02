@@ -4,16 +4,8 @@ import L from "leaflet";
 
 import { useMapContext } from "@/components/map/map-context";
 import { getBrand } from "@/lib/brands";
+import { createStationIcon } from "@/lib/marker-icon";
 import type { Station } from "@/lib/types";
-
-function createIcon(color: string): L.DivIcon {
-  return L.divIcon({
-    className: "",
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-    html: `<div style="width:14px;height:14px;background:${color};border:2px solid #fff;border-radius:9999px;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`,
-  });
-}
 
 interface StationMarkerProps {
   station: Station;
@@ -23,7 +15,6 @@ export function StationMarker({ station }: StationMarkerProps) {
   const { selectedStationId, selectStation } = useMapContext();
   const markerRef = useRef<L.Marker>(null);
   const brand = station.brand ? getBrand(station.brand) : null;
-  const color = brand?.color ?? "#0ea5e9";
   const isSelected = selectedStationId === station.id;
 
   useEffect(() => {
@@ -37,7 +28,7 @@ export function StationMarker({ station }: StationMarkerProps) {
     <Marker
       ref={markerRef}
       position={[station.lat, station.lng]}
-      icon={createIcon(color)}
+      icon={createStationIcon(brand)}
       eventHandlers={{ click: () => selectStation(station.id) }}
     >
       <Tooltip direction="top" offset={[0, -10]}>

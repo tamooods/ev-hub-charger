@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import { StationList } from "@/components/home/station-list";
+import { SiteHeader } from "@/components/layout/site-header";
+import { FitBounds } from "@/components/map/fit-bounds";
 import { MapProvider, MapShell } from "@/components/map/map-context";
 import { RouteLayer } from "@/components/map/route-layer";
 import { StationMarker } from "@/components/map/station-marker";
-import { FitBounds } from "@/components/map/fit-bounds";
-import { SiteHeader } from "@/components/layout/site-header";
-import { StationList } from "@/components/home/station-list";
-import { geocode, getRoute, type GeocodeResult, type RouteResult } from "@/lib/route";
 import { distanceToPolylineKm, type LatLng } from "@/lib/geo";
+import {
+  geocode,
+  getRoute,
+  type GeocodeResult,
+  type RouteResult,
+} from "@/lib/route";
 import type { Station } from "@/lib/types";
 
 interface RoutePlannerProps {
@@ -25,10 +30,17 @@ interface PlaceField {
 }
 
 function createEmptyPlace(): PlaceField {
-  return { query: "", results: [], selected: null, loading: false, open: false };
+  return {
+    query: "",
+    results: [],
+    selected: null,
+    loading: false,
+    open: false,
+  };
 }
 
 const MAX_DISTANCE_KM = 20;
+const GEOCODE_DEBOUNCE_MS = 300;
 
 export function RoutePlanner({ stations }: RoutePlannerProps) {
   const [origin, setOrigin] = useState<PlaceField>(createEmptyPlace);
@@ -37,35 +49,72 @@ export function RoutePlanner({ stations }: RoutePlannerProps) {
   const [routeError, setRouteError] = useState<string | null>(null);
   const [loadingRoute, setLoadingRoute] = useState(false);
   const [nearbyStations, setNearbyStations] = useState<Station[]>([]);
+  const debounceTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
+    {},
+  );
+  const requestSeq = useRef<Record<string, number>>({});
 
   const hasRoute = route !== null && origin.selected && destination.selected;
 
-  async function handleGeocode(field: "origin" | "destination", query: string) {
+  function handleGeocode(field: "origin" | "destination", query: string) {
     const setter = field === "origin" ? setOrigin : setDestination;
-    const current = field === "origin" ? origin : destination;
+    const key = field;
+
     if (!query.trim()) {
-      setter({ ...current, query, results: [], open: false });
+      if (debounceTimers.current[key]) {
+        clearTimeout(debounceTimers.current[key]);
+        delete debounceTimers.current[key];
+      }
+      setter((current) => ({ ...current, query, results: [], open: false }));
       return;
     }
-    setter({ ...current, query, loading: true, open: true });
-    try {
-      const results = await geocode(query);
-      setter({ ...current, query, results, loading: false, open: true });
-    } catch {
-      setter({ ...current, query, results: [], loading: false, open: false });
+
+    setter((current) => ({ ...current, query }));
+
+    if (debounceTimers.current[key]) {
+      clearTimeout(debounceTimers.current[key]);
     }
+    debounceTimers.current[key] = setTimeout(async () => {
+      const seq = (requestSeq.current[key] =
+        (requestSeq.current[key] ?? 0) + 1);
+      setter((current) => ({ ...current, loading: true, open: true }));
+      try {
+        const results = await geocode(query);
+        if (requestSeq.current[key] === seq) {
+          setter((current) => ({
+            ...current,
+            results,
+            loading: false,
+            open: true,
+          }));
+        }
+      } catch {
+        if (requestSeq.current[key] === seq) {
+          setter((current) => ({
+            ...current,
+            results: [],
+            loading: false,
+            open: false,
+          }));
+        }
+      }
+    }, GEOCODE_DEBOUNCE_MS);
   }
 
   function selectPlace(field: "origin" | "destination", result: GeocodeResult) {
     const setter = field === "origin" ? setOrigin : setDestination;
-    const current = field === "origin" ? origin : destination;
-    setter({
+    const key = field;
+    if (debounceTimers.current[key]) {
+      clearTimeout(debounceTimers.current[key]);
+      delete debounceTimers.current[key];
+    }
+    setter((current) => ({
       ...current,
       query: result.name,
       results: [],
       selected: result,
       open: false,
-    });
+    }));
   }
 
   async function planRoute() {
@@ -117,9 +166,14 @@ export function RoutePlanner({ stations }: RoutePlannerProps) {
               >
                 {loadingRoute ? "กำลังคำนวณ..." : "วางแผนเส้นทาง"}
               </button>
-              {routeError && <p className="text-sm text-red-600">{routeError}</p>}
+              {routeError && (
+                <p className="text-sm text-red-600">{routeError}</p>
+              )}
               {hasRoute && (
-                <RouteSummary route={route} nearbyCount={nearbyStations.length} />
+                <RouteSummary
+                  route={route}
+                  nearbyCount={nearbyStations.length}
+                />
               )}
             </div>
             {hasRoute ? (
@@ -150,13 +204,16 @@ export function RoutePlanner({ stations }: RoutePlannerProps) {
   );
 }
 
-function findNearbyStations(stations: Station[], coordinates: LatLng[]): Station[] {
+function findNearbyStations(
+  stations: Station[],
+  coordinates: LatLng[],
+): Station[] {
   return stations
     .map((station) => ({
       station,
       distance: distanceToPolylineKm(
         { lat: station.lat, lng: station.lng },
-        coordinates
+        coordinates,
       ),
     }))
     .filter(({ distance }) => distance <= MAX_DISTANCE_KM)
@@ -171,10 +228,17 @@ interface PlaceInputProps {
   onSelect: (result: GeocodeResult) => void;
 }
 
-function PlaceInput({ label, field, onQueryChange, onSelect }: PlaceInputProps) {
+function PlaceInput({
+  label,
+  field,
+  onQueryChange,
+  onSelect,
+}: PlaceInputProps) {
   return (
     <div className="relative">
-      <label className="mb-1 block text-xs font-medium text-slate-500">{label}</label>
+      <label className="mb-1 block text-xs font-medium text-slate-500">
+        {label}
+      </label>
       <input
         type="text"
         value={field.query}

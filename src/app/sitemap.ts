@@ -1,21 +1,24 @@
 import type { MetadataRoute } from "next";
 
+import { getSiteUrl } from "@/lib/site-url";
+
 export default function sitemap(): MetadataRoute.Sitemap {
+  const siteUrl = getSiteUrl();
   return [
     {
-      url: "https://evhubcharger.example.com",
+      url: siteUrl,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
     },
     {
-      url: "https://evhubcharger.example.com/planner",
+      url: `${siteUrl}/planner`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: "https://evhubcharger.example.com/add-station",
+      url: `${siteUrl}/add-station`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,

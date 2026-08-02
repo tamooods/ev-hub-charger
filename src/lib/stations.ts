@@ -35,7 +35,7 @@ export async function getApprovedStations(): Promise<Station[]> {
     amp: row.amp as number | null,
     slots: row.slots as number | null,
     region: row.region as Region | null,
-    brand: row.brand as string | null,
+    brand: (row.brand as string | null) ?? detectBrand(row.name as string)?.id ?? null,
     source: row.source as Station["source"],
     status: row.status as Station["status"],
   }));

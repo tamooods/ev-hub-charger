@@ -36,6 +36,7 @@ export interface BrandInfo {
   keywords: string[];
   app: string | null;
   color: string;
+  logoUrl: string | null;
 }
 
 export interface MapTheme {
