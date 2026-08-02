@@ -11,22 +11,22 @@ export function SiteHeader() {
           EV Hub Charger
         </span>
       </Link>
-      <nav className="flex items-center gap-1 text-sm">
+      <nav className="flex items-center gap-0.5 text-sm">
         <Link
           href="/"
-          className="rounded-md px-3 py-1.5 font-medium text-blue-600 hover:bg-blue-50"
+          className="rounded-md px-2.5 py-1.5 font-medium text-blue-600 hover:bg-blue-50"
         >
           แผนที่
         </Link>
         <Link
           href="/planner"
-          className="rounded-md px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100"
+          className="rounded-md px-2.5 py-1.5 font-medium text-slate-700 hover:bg-slate-100"
         >
           วางแผนเส้นทาง
         </Link>
         <Link
           href="/add-station"
-          className="rounded-md px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100"
+          className="rounded-md px-2.5 py-1.5 font-medium text-slate-700 hover:bg-slate-100"
         >
           เพิ่มสถานี
         </Link>

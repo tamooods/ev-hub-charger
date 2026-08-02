@@ -25,6 +25,8 @@ const DEFAULT_FILTERS: StationFilters = {
 
 export function MapExplorer({ stations }: MapExplorerProps) {
   const [filters, setFilters] = useState<StationFilters>(DEFAULT_FILTERS);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
 
   const filteredStations = useMemo(
     () => filterStations(stations, filters),
@@ -39,16 +41,8 @@ export function MapExplorer({ stations }: MapExplorerProps) {
     <MapProvider>
       <div className="flex h-dvh flex-col">
         <SiteHeader />
-        <div className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
-          <aside className="z-10 order-2 flex max-h-[45%] flex-col border-t border-slate-200 bg-white lg:order-1 lg:max-h-none lg:w-96 lg:border-r lg:border-t-0">
-            <FilterPanel
-              stations={stations}
-              filters={filters}
-              onChange={updateFilters}
-            />
-            <StationList stations={filteredStations} />
-          </aside>
-          <main className="order-1 relative min-h-0 flex-1 lg:order-2">
+        <div className="relative min-h-0 flex-1">
+          <main className="absolute inset-0">
             <MapShell>
               {filteredStations.map((station) => (
                 <StationMarker key={station.id} station={station} />
@@ -56,9 +50,170 @@ export function MapExplorer({ stations }: MapExplorerProps) {
               <FitBounds points={filteredStations} />
             </MapShell>
             <ThemeSwitcher />
+
+            <div className="absolute left-3 top-3 z-[1000] flex gap-2 lg:hidden">
+              <button
+                onClick={() => setFilterOpen(true)}
+                className="rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-800 shadow-md"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <FilterIcon />
+                  ค้นหา/กรอง
+                </span>
+              </button>
+            </div>
+
+            <button
+              onClick={() => setListOpen((open) => !open)}
+              className="absolute inset-x-0 bottom-0 z-[1000] mx-auto mb-4 w-max rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg lg:hidden"
+            >
+              <span className="inline-flex items-center gap-2">
+                <ListIcon />
+                รายการสถานี ({filteredStations.length})
+                <span className={listOpen ? "rotate-180 transition-transform" : "transition-transform"}>
+                  <ChevronUpIcon />
+                </span>
+              </span>
+            </button>
           </main>
+
+          <aside className="absolute inset-y-0 left-0 z-10 hidden w-96 flex-col border-r border-slate-200 bg-white lg:flex">
+            <div className="shrink-0 border-b border-slate-200 p-3">
+              <FilterPanel
+                stations={stations}
+                filters={filters}
+                onChange={updateFilters}
+              />
+            </div>
+            <StationList stations={filteredStations} />
+          </aside>
+
+          {filterOpen && (
+            <div className="absolute inset-0 z-[1100] flex flex-col justify-end bg-black/40 lg:hidden">
+              <div className="max-h-[85%] overflow-y-auto rounded-t-2xl bg-white p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className="text-base font-semibold text-slate-900">
+                    ค้นหาและกรอง
+                  </h2>
+                  <button
+                    onClick={() => setFilterOpen(false)}
+                    className="rounded-full p-1 text-slate-500 hover:bg-slate-100"
+                  >
+                    <CloseIcon />
+                  </button>
+                </div>
+                <FilterPanel
+                  stations={stations}
+                  filters={filters}
+                  onChange={updateFilters}
+                />
+                <button
+                  onClick={() => setFilterOpen(false)}
+                  className="mt-4 w-full rounded-lg bg-blue-600 py-3 text-sm font-semibold text-white"
+                >
+                  ดูผลลัพธ์ ({filteredStations.length} สถานี)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {listOpen && (
+            <div className="absolute inset-0 z-[1100] flex flex-col justify-end bg-black/40 lg:hidden">
+              <div className="flex max-h-[75%] flex-col rounded-t-2xl bg-white p-4">
+                <div className="mb-3 flex shrink-0 items-center justify-between">
+                  <div>
+                    <h2 className="text-base font-semibold text-slate-900">
+                      รายการสถานี
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      พบ {filteredStations.length} สถานี
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setListOpen(false)}
+                    className="rounded-full p-1 text-slate-500 hover:bg-slate-100"
+                  >
+                    <CloseIcon />
+                  </button>
+                </div>
+                <div className="min-h-0 flex-1">
+                  <StationList stations={filteredStations} />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </MapProvider>
+  );
+}
+
+function FilterIcon() {
+  return (
+    <svg
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
+  );
+}
+
+function ListIcon() {
+  return (
+    <svg
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="8" y1="6" x2="21" y2="6" />
+      <line x1="8" y1="12" x2="21" y2="12" />
+      <line x1="8" y1="18" x2="21" y2="18" />
+      <line x1="3" y1="6" x2="3.01" y2="6" />
+      <line x1="3" y1="12" x2="3.01" y2="12" />
+      <line x1="3" y1="18" x2="3.01" y2="18" />
+    </svg>
+  );
+}
+
+function ChevronUpIcon() {
+  return (
+    <svg
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      className="h-5 w-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
   );
 }

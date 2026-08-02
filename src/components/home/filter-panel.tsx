@@ -15,7 +15,7 @@ export function FilterPanel({ stations, filters, onChange }: FilterPanelProps) {
   }));
 
   return (
-    <div className="flex flex-col gap-3 border-b border-slate-200 p-3">
+    <div className="flex flex-col gap-3">
       <input
         type="search"
         placeholder="ค้นหาสถานี..."
