@@ -30,7 +30,7 @@ export function MapExplorer({ stations }: MapExplorerProps) {
 
   const filteredStations = useMemo(
     () => filterStations(stations, filters),
-    [stations, filters]
+    [stations, filters],
   );
 
   const updateFilters = (patch: Partial<StationFilters>) => {
@@ -70,22 +70,51 @@ export function MapExplorer({ stations }: MapExplorerProps) {
               <span className="inline-flex items-center gap-2">
                 <ListIcon />
                 รายการสถานี ({filteredStations.length})
-                <span className={listOpen ? "rotate-180 transition-transform" : "transition-transform"}>
+                <span
+                  className={
+                    listOpen
+                      ? "rotate-180 transition-transform"
+                      : "transition-transform"
+                  }
+                >
                   <ChevronUpIcon />
                 </span>
               </span>
             </button>
           </main>
 
-          <aside className="absolute inset-y-0 left-0 z-10 hidden w-96 flex-col border-r border-slate-200 bg-white lg:flex">
-            <div className="shrink-0 border-b border-slate-200 p-3">
+          <aside className="absolute inset-y-0 left-0 z-10 hidden w-[26rem] flex-col border-r border-slate-200 bg-white lg:flex">
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
+              <div>
+                <h2 className="text-sm font-semibold text-slate-900">
+                  ค้นหาสถานีชาร์จ
+                </h2>
+                <p className="text-xs text-slate-500">
+                  พบ {filteredStations.length} สถานี
+                </p>
+              </div>
+              <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                {filteredStations.length} สถานี
+              </span>
+            </div>
+            <div className="shrink-0 border-b border-slate-200 p-4">
               <FilterPanel
                 stations={stations}
                 filters={filters}
                 onChange={updateFilters}
               />
             </div>
-            <StationList stations={filteredStations} />
+            <div className="flex min-h-0 flex-1 flex-col">
+              <div className="flex shrink-0 items-center justify-between px-4 pb-1 pt-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  รายการสถานี
+                </h3>
+                <span className="text-xs text-slate-400">
+                  {filteredStations.length} ผลลัพธ์
+                </span>
+              </div>
+              <StationList stations={filteredStations} />
+            </div>
           </aside>
 
           {filterOpen && (
