@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EV Hub Charger
 
-## Getting Started
+เว็บค้นหาสถานีชาร์จรถยนต์ไฟฟ้า (EV) ในประเทศไทย เป็นเวอร์ชันปรับปรุงของ [clubcharge.net/hub](https://clubcharge.net/hub/) — มีแผนที่, วางแผนเส้นทาง (trip planner) และให้ผู้ใช้เพิ่ม/แก้ไขสถานีได้เอง
 
-First, run the development server:
+## เทคโนโลยี
+
+- **Next.js 16 (App Router)** + TypeScript + Tailwind CSS
+- **Supabase (Postgres)** — เก็บข้อมูลสถานี
+- **Leaflet (react-leaflet)** — แผนที่
+- **OSRM** — วางแผนเส้นทาง
+- **Nominatim (OSM)** — geocode
+- Deploy บน **Vercel**
+
+## ฟีเจอร์
+
+- **แผนที่หาสถานี** (`/`) — กรองตามภูมิภาค/แบรนด์/กำลังชาร์จ, ค้นหา, เปลี่ยนธีมแผนที่, ปุ่มเปิดใน Google Maps
+- **วางแผนเส้นทาง** (`/planner`) — ป้อนต้นทาง-ปลายทาง, วาดเส้นทางและแสดงสถานีที่อยู่ใกล้เส้นทาง
+- **เพิ่มสถานี** (`/add-station`) — ผู้ใช้ส่งสถานีใหม่, รอการอนุมัติ (`status='pending'`)
+- **หน้าอนุมัติ** (`/admin`) — อนุมัติ/ปฏิเสธสถานีที่ผู้ใช้ส่ง
+
+## เริ่มต้นใช้งาน
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+เปิด [http://localhost:3000](http://localhost:3000) เพื่อดูผล
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ตั้งค่า Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+คัดลอก `.env.example` เป็น `.env` แล้วเติมค่า:
 
-## Learn More
+| ตัวแปร | คำอธิบาย |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL โปรเจกต์ Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon key (ใช้ฝั่ง client) |
+| `SUPABASE_SERVICE_ROLE_KEY` | service role key (ใช้ฝั่ง server เท่านั้น) |
+| `CRON_SECRET` | ใช้ยืนยันตัวตนตอน cron เรียก `/api/seed` |
+| `NEXT_PUBLIC_SITE_URL` | URL ของเว็บ (ใช้ใน sitemap/robots) |
 
-To learn more about Next.js, take a look at the following resources:
+**หมายเหตุ:** ไฟล์ `.env` ถูกละเว้นในการ commit (ดู `.gitignore`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ฐานข้อมูล (Supabase)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Schema อยู่ที่ `supabase/migrations/0001_init.sql` — ต้อง apply ด้วยมือใน Supabase Dashboard (ไม่มี DB/CLI ในเครื่อง)
+- ตาราง `stations`: `name`, `lat/lng`, `kw/amp/slots`, `region`, `brand`, `source` (`clubcharge`/`user`), `status` (`pending`/`approved`/`rejected`)
+- RLS: ใครก็อ่านได้เฉพาะแถว `approved`, insert สาธารณะได้, `service_role` จัดการได้ทั้งหมด
 
-## Deploy on Vercel
+## การดึงข้อมูลจาก เว็บต้นทาง
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+ข้อมูลสถานีเริ่มต้น scrape จาก API ของ clubcharge แล้วเก็บใน Supabase:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **รันเองครั้งเดียว:** `node --env-file=.env scripts/seed-from-clubcharge.mjs`
+- **อัตโนมัติทุก ~15 วัน:** Vercel Cron ใน `vercel.json` เรียก `GET /api/seed` เวลา 09:00 UTC ทุกวันที่ 1 และ 16 ของเดือน (ต้องมี `CRON_SECRET` ตั้งใน Vercel)
+
+## คำสั่ง
+
+| คำสั่ง | ความหมาย |
+|---|---|
+| `npm run dev` | เปิด dev server (port 3000) |
+| `npm run build` | build สำหรับ production |
+| `npm run lint` | ตรวจ ESLint |
+| `npx tsc --noEmit` | ตรวจ TypeScript |
+| `npx vercel --prod --yes` | deploy ขึ้น production |
+
+## การอนุมัติ (Moderation)
+
+1. ผู้ใช้ส่งสถานีผ่าน `/add-station` → `status='pending'`
+2. แอดมินเปิด `/admin` แล้วกด อนุมัติ/ปฏิเสธ
+3. เมื่ออนุมัติ ข้อมูลจะเข้าแผนที่ทันทีผ่านการ invalidate cache (`updateTag("stations")`)

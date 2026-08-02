@@ -1,4 +1,4 @@
-# EV Hub Charger — Design Spec
+# EV Hub Charger — เอกสารออกแบบ
 
 วันที่: 2026-08-02
 
@@ -6,15 +6,15 @@
 
 เว็บหา EV charging hub ในไทย เหมือน clubcharge.net/hub/ แต่ปรับ UX/UI ให้ดีขึ้นและเพิ่มฟีเจอร์: วางแผนเส้นทาง (trip planner) และให้ผู้ใช้เพิ่ม/แก้ไขสถานีได้
 
-## Tech Stack
+## เทคโนโลยีที่ใช้
 
-- **Next.js 15 (App Router) + TypeScript + Tailwind** — deploy ฟรีบน Vercel, SEO ดี
+- **Next.js 16 (App Router) + TypeScript + Tailwind** — deploy ฟรีบน Vercel, SEO ดี
 - **Supabase (Postgres)** — เก็บสถานีและข้อมูลผู้ใช้, ใช้ client ฝั่ง server เท่านั้น
 - **Leaflet (react-leaflet)** — แผนที่, client component เท่านั้น
 - **OSRM demo server** — วาดเส้นทาง (ฟรี ไม่ต้องลงทะเบียน)
 - **Nominatim (OSM)** — geocode หาพิกัดจากชื่อสถานที่
 
-## Data Model (Supabase)
+## โครงสร้างข้อมูล (Supabase)
 
 ```sql
 stations (
@@ -41,40 +41,40 @@ stations (
 ## หน้าและฟีเจอร์ (v1)
 
 ### `/` — แผนที่หาสถานี
-- แผนที่ Leaflet full-screen (mobile-first), sidebar/bottom sheet สำหรับ filter และรายการสถานี
-- Filter: ภูมิภาค (all/north/isan/central/east/south), แบรนด์ (checkbox), min kW (ทั้งหมด/180/240/360), ค้นหาชื่อ
+- แผนที่ Leaflet full-screen (mobile-first), sidebar/bottom sheet สำหรับกรองและรายการสถานี
+- ตัวกรอง: ภูมิภาค (ทั้งหมด/เหนือ/อีสาน/กลาง/ตะวันออก/ใต้), แบรนด์ (checkbox), min kW (ทั้งหมด/180/240/360), ค้นหาชื่อ
 - แสดงจำนวนผลลัพธ์สด
-- Marker: dot สีตามแบรนด์, swap เป็น logo ตอน zoom ระดับหนึ่ง (ถ้ามี)
+- Marker: จุดสีตามแบรนด์, สลับเป็น logo ตอน zoom ระดับหนึ่ง (ถ้ามี)
 - Popup: ชื่อ, สเปก ({slots} หัวชาร์จ กำลังสูงสุด {kw} kW {amp} A), ปุ่ม "เปิดใน Google Maps" และ "นำทางทันที"
-- Map themes: contrast (ArcGIS World_Street_Map) / bright (OSM HOT) / terrain (OSM) — เลือกได้ เก็บใน localStorage
-- Share link: `/?station=<id>` → auto scroll + เปิด popup
+- ธีมแผนที่: contrast (ArcGIS World_Street_Map) / bright (OSM HOT) / terrain (OSM) — เลือกได้ เก็บใน localStorage
+- Share link: `/?station=<id>` → เลื่อนอัตโนมัติ + เปิด popup
 - Server component render ข้อมูลสถานี (JSON-LD Place schema) เพื่อ SEO
 
 ### `/planner` — วางแผนเส้นทาง
-- ป้อนต้นทาง-ปลายทาง → geocode (Nominatim) → วาด polyline (OSRM) บนแผนที่
-- แสดงสถานีที่อยู่ใกล้เส้นทาง (distance point-to-polyline threshold)
-- v1: ไม่มีคำนวณ range/cost/car model
+- ป้อนต้นทาง-ปลายทาง → geocode (Nominatim) → วาดเส้นทาง (OSRM) บนแผนที่
+- แสดงสถานีที่อยู่ใกล้เส้นทาง (ระยะห่างจุด-เส้น threshold)
+- v1: ไม่มีคำนวณ range/cost/รุ่นรถ
 
 ### `/add-station` — เพิ่ม/แก้ไขสถานี
-- ฟอร์ม: ชื่อ, region, kW, amp, slots, pick พิกัดบนแผนที่
-- ส่งเข้า Supabase `status='pending'` รอ approve
-- หน้า admin คร่าวๆ สำหรับ approve/reject (server action ง่ายๆ)
+- ฟอร์ม: ชื่อ, ภูมิภาค, kW, amp, slots, เลือกพิกัดบนแผนที่
+- ส่งเข้า Supabase `status='pending'` รออนุมัติ
+- หน้าแอดมินแบบง่าย สำหรับอนุมัติ/ปฏิเสธ (server action)
 
-## UX/UI หลักการ
+## หลักการ UX/UI
 - Mobile-first
 - Loading skeleton + error state ทุก async path
 - แสดงผลลัพธ์นับสด
-- ไม่ reuse รูป/logo ของ clubcharge (ลิขสิทธิ์) — ใช้ dot สีแทน
+- ไม่ใช้รูป/logo ของ clubcharge (ลิขสิทธิ์) — ใช้จุดสีแทน
 
-## Clean Code หลักการ
+## หลักการ Clean Code
 - ชื่อสื่อความหมาย, ฟังก์ชันเล็กทำอย่างเดียว (SRP)
 - แยก business logic ออกจาก UI: `src/lib/*`
 - DRY, TypeScript types ชัดเจน
 - ไม่มี comment ในโค้ด
 - ไม่มี unit test (ตามคำขอ), ตรวจด้วย `npm run build` + `npm run lint`
 
-## Error Handling
-- Supabase/OSRM/Nominatim fail → แสดง message ชัดเจน ไม่พังทั้งหน้า
+## การจัดการ Error
+- Supabase/OSRM/Nominatim ล้มเหลว → แสดงข้อความชัดเจน ไม่พังทั้งหน้า
 - Geocode ไม่เจอ → แจ้งผู้ใช้ให้แก้ชื่อสถานที่
 
 ## Deploy
