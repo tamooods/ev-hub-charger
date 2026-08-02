@@ -7,7 +7,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["PTT"],
     app: "PTT EV Station",
     color: "#0ea5e9",
-    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a8/PTT_Public_Company_logo.svg",
+    logoUrl: "/brands/ptt.png",
   },
   {
     id: "igreen",
@@ -15,7 +15,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["IGREEN"],
     app: "iGreen+",
     color: "#16a34a",
-    logoUrl: null,
+    logoUrl: "/brands/igreen.jpg",
   },
   {
     id: "spark",
@@ -23,7 +23,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["SPARK"],
     app: "SPARK EV",
     color: "#f97316",
-    logoUrl: null,
+    logoUrl: "/brands/sparkev.png",
   },
   {
     id: "onecharge",
@@ -31,7 +31,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["ONECHARGE"],
     app: "OneCharge",
     color: "#8b5cf6",
-    logoUrl: null,
+    logoUrl: "/brands/onecharge.jpeg",
   },
   {
     id: "elexa",
@@ -39,7 +39,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["ELEXA"],
     app: "Elexa",
     color: "#ec4899",
-    logoUrl: null,
+    logoUrl: "/brands/elexa.png",
   },
   {
     id: "pea-volta",
@@ -47,7 +47,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["PEA VOLTA", "PEA"],
     app: "PEA Volta",
     color: "#eab308",
-    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/9/90/Logo_of_the_Provincial_Electricity_Authority_of_Thailand.svg",
+    logoUrl: "/brands/peavolta.png",
   },
   {
     id: "evolt",
@@ -55,7 +55,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["EVOLT"],
     app: "Evolt",
     color: "#6366f1",
-    logoUrl: null,
+    logoUrl: "/brands/evolt.png",
   },
   {
     id: "nexmoev",
@@ -63,7 +63,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["NEXMOEV"],
     app: "NEXMOEV",
     color: "#06b6d4",
-    logoUrl: null,
+    logoUrl: "/brands/nexmoev.png",
   },
   {
     id: "tpi",
@@ -71,7 +71,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["TPI"],
     app: null,
     color: "#dc2626",
-    logoUrl: null,
+    logoUrl: "/brands/tpi.svg",
   },
   {
     id: "ev-one",
@@ -79,7 +79,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["EV ONE"],
     app: null,
     color: "#22c55e",
-    logoUrl: null,
+    logoUrl: "/brands/evone.png",
   },
   {
     id: "acharge",
@@ -95,7 +95,7 @@ const BRANDS: BrandInfo[] = [
     keywords: ["KQ CHARGE", "KQ"],
     app: "KQ Charge",
     color: "#14b8a6",
-    logoUrl: null,
+    logoUrl: "/brands/kqcharge.png",
   },
 ];
 

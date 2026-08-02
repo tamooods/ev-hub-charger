@@ -20,7 +20,7 @@ export function buildStationSvg(color: string, size = 24): string {
 
 function logoFrameHtml(url: string, color: string): string {
   return `<div style="width:30px;height:30px;border-radius:9999px;background:#fff;border:2px solid ${color};display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.3);overflow:hidden">
-    <img src="${url}" alt="" style="width:20px;height:20px;object-fit:contain"/>
+    <img src="${url}" alt="" style="width:28px;height:28px;border-radius:9999px;object-fit:cover"/>
   </div>`;
 }
 

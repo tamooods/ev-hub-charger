@@ -1,12 +1,8 @@
 import { useMapContext } from "@/components/map/map-context";
 import { getBrand } from "@/lib/brands";
 import { REGION_LABELS } from "@/lib/map";
-import { buildBrandSvg } from "@/lib/marker-icon";
+import Image from "next/image";
 import type { Region, Station } from "@/lib/types";
-
-function iconDataUri(brand: ReturnType<typeof getBrand>): string {
-  return `data:image/svg+xml;utf8,${encodeURIComponent(buildBrandSvg(brand, 20))}`;
-}
 
 interface StationListProps {
   stations: Station[];
@@ -24,7 +20,7 @@ export function StationList({ stations }: StationListProps) {
   }
 
   return (
-    <ul className="flex-1 divide-y divide-slate-100 overflow-y-auto">
+    <ul className="min-h-0 flex-1 divide-y divide-slate-100 overflow-y-auto">
       {stations.map((station) => (
         <StationRow
           key={station.id}
@@ -54,14 +50,22 @@ function StationRow({ station, selected, onSelect }: StationRowProps) {
           selected ? "bg-blue-50" : ""
         }`}
       >
-        <span
-          className="mt-1 inline-block h-5 w-5 shrink-0"
-          style={{
-            backgroundImage: `url("${iconDataUri(brand)}")`,
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
+        <span className="mt-1 inline-block h-5 w-5 shrink-0">
+          {brand?.logoUrl ? (
+            <Image
+              src={brand.logoUrl}
+              alt={brand.label}
+              width={20}
+              height={20}
+              className="h-5 w-5 rounded-full object-cover"
+            />
+          ) : (
+            <span
+              className="block h-5 w-5 rounded-full"
+              style={{ backgroundColor: brand?.color ?? "#0ea5e9" }}
+            />
+          )}
+        </span>
         <span className="min-w-0">
           <span className="block truncate text-sm font-medium text-slate-900">
             {station.name}

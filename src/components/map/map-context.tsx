@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -84,8 +84,9 @@ export function MapShell({ children }: MapShellProps) {
       maxZoom={20}
       className="h-full w-full"
       attributionControl={true}
-      zoomControl={true}
+      zoomControl={false}
     >
+      <ZoomControl position="bottomright" />
       <TileLayer
         url={theme.url}
         attribution={theme.attribution}

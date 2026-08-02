@@ -1,5 +1,6 @@
 import { ALL_REGIONS, MIN_KW_OPTIONS, REGION_LABELS } from "@/lib/map";
 import { getBrands } from "@/lib/brands";
+import Image from "next/image";
 import type { Station, StationFilters } from "@/lib/types";
 
 interface FilterPanelProps {
@@ -78,10 +79,20 @@ export function FilterPanel({ stations, filters, onChange }: FilterPanelProps) {
                 }}
                 className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
               />
-              <span
-                className="inline-block h-3 w-3 rounded-full"
-                style={{ backgroundColor: brand.color }}
-              />
+              {brand.logoUrl ? (
+                <Image
+                  src={brand.logoUrl}
+                  alt={brand.label}
+                  width={16}
+                  height={16}
+                  className="h-4 w-4 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <span
+                  className="inline-block h-4 w-4 shrink-0 rounded-full"
+                  style={{ backgroundColor: brand.color }}
+                />
+              )}
               <span className="text-slate-700">{brand.label}</span>
               <span className="ml-auto text-xs text-slate-400">{brand.count}</span>
             </label>

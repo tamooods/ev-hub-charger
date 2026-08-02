@@ -2,11 +2,14 @@ import Link from "next/link";
 
 export function SiteHeader() {
   return (
-    <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2.5">
+    <header className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-slate-200 bg-white px-4 py-2.5">
       <Link href="/" className="flex items-center gap-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
-          EV
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.png"
+          alt="EV Hub Charger"
+          className="h-7 w-7 rounded-full object-cover"
+        />
         <span className="text-sm font-bold text-slate-900">
           EV Hub Charger
         </span>
