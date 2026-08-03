@@ -145,8 +145,8 @@ export function RoutePlanner({ stations }: RoutePlannerProps) {
       <div className="flex h-dvh flex-col">
         <SiteHeader />
         <div className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
-          <aside className="z-10 order-2 flex max-h-[45%] flex-col border-t border-slate-200 bg-white lg:order-1 lg:max-h-none lg:w-96 lg:border-r lg:border-t-0">
-            <div className="flex flex-col gap-3 border-b border-slate-200 p-3">
+          <aside className="z-10 order-2 h-[45%] overflow-y-auto border-t border-slate-200 bg-white lg:order-1 lg:flex lg:h-auto lg:flex-col lg:w-96 lg:overflow-visible lg:border-r lg:border-t-0">
+            <div className="flex shrink-0 flex-col gap-3 border-b border-slate-200 p-3">
               <PlaceInput
                 label="ต้นทาง"
                 field={origin}

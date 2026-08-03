@@ -97,6 +97,38 @@ const BRANDS: BrandInfo[] = [
     color: "#14b8a6",
     logoUrl: "/brands/kqcharge.png",
   },
+  {
+    id: "sharge",
+    label: "Sharge",
+    keywords: ["SHARGE", "REVER"],
+    app: "Sharge",
+    color: "#0891b2",
+    logoUrl: "/brands/reversharger.png",
+  },
+  {
+    id: "ea-anywhere",
+    label: "EA Anywhere",
+    keywords: ["EA ANYWHERE"],
+    app: "EA Anywhere",
+    color: "#7c3aed",
+    logoUrl: "/brands/eaanywhere.png",
+  },
+  {
+    id: "mg",
+    label: "MG",
+    keywords: ["MG"],
+    app: "MG",
+    color: "#e11d48",
+    logoUrl: "/brands/mg.png",
+  },
+  {
+    id: "chargeplus",
+    label: "Charge+",
+    keywords: ["CHARGE+"],
+    app: "Charge+",
+    color: "#d97706",
+    logoUrl: "/brands/chargeplus.png",
+  },
 ];
 
 export function detectBrand(name: string): BrandInfo | null {
