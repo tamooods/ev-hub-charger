@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
@@ -75,9 +76,17 @@ export interface MapShellProps {
 export function MapShell({ children }: MapShellProps) {
   const { themeId, setMap } = useMapContext();
   const theme = MAP_THEMES.find((t) => t.id === themeId) ?? MAP_THEMES[0];
+  const [mountKey, setMountKey] = useState(0);
+
+  useLayoutEffect(() => {
+    return () => {
+      setMountKey((k) => k + 1);
+    };
+  }, []);
 
   return (
     <MapContainer
+      key={mountKey}
       ref={setMap}
       center={[13.7367, 100.5231]}
       zoom={6}
